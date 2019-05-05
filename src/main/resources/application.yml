@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: ${UM_DB_CONNECTION_URL}
+    username: ${UM_DB_USERNAME}
+    password: ${UM_DB_PASSWORD}
+  jpa.properties.hibernate.jdbc.lob.non_contextual_creation: true
