@@ -1,6 +1,7 @@
 plugins {
-	id 'org.springframework.boot' version '2.1.4.RELEASE'
-	id 'java'
+    id 'org.springframework.boot' version '2.1.4.RELEASE'
+    id 'com.bmuschko.docker-spring-boot-application' version '4.8.0'
+    id 'java'
 }
 
 apply plugin: 'io.spring.dependency-management'
@@ -11,19 +12,41 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 repositories {
-	mavenCentral()
+    jcenter()
+    maven {
+        url "https://plugins.gradle.org/m2/"
+    }
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.postgresql:postgresql'
-	implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml'
-	implementation group: 'org.flywaydb', name: 'flyway-core'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.postgresql:postgresql'
+    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml'
+    implementation group: 'org.flywaydb', name: 'flyway-core'
 
-	compileOnly group: 'org.projectlombok', name: 'lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+    compileOnly group: 'org.projectlombok', name: 'lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'com.h2database:h2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'com.h2database:h2'
+}
+
+//configure docker plugin
+docker {
+    springBootApplication {
+        baseImage = 'openjdk:8-jre-slim'
+        ports = [8080]
+        tag = "${System.getenv("DOCKER_USER")}/${jar.baseName}:latest"
+    }
+
+    registryCredentials {
+        username = "${System.getenv("DOCKER_USER")}"
+        password = "${System.getenv("DOCKER_PASS")}"
+    }
+
+    dockerPushImage {
+        imageName = "otodosov/${jar.baseName}"
+        tag = 'latest'
+    }
 }

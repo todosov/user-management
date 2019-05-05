@@ -16,9 +16,22 @@ To specify required response content type set *Accept* header to either applicat
 There are tests for web, persistence and service layers.
 In tests embedded h2 db is used instead of postgres db. 
 
+# Deployment 
+
+Application builds docker image and pushes it to docker hub. Image can be used for further deployment. Versioning of application image is not implemented.
+To build and push image run 
+```sh 
+./gradlew dockerPushImage
+```
+
 # How to run
 
-[run.sh](run.sh) contains bash script to pull and run postgres docker container and launch application on port 8080 connected to this db.
+Execute 
+```sh 
+docker-compose up
+```
+in the project's root directory. 
+Docker will run containers with application and postgres db.
 DB schema will be automatically rolled out by Flyway.
 
 Application uses environment variables to establish db connection: 
@@ -26,6 +39,12 @@ Application uses environment variables to establish db connection:
  $UM_DB_CONNECTION_URL
  $UM_DB_USERNAME
  $UM_DB_PASSWORD
+ ``` 
+ 
+Environment variables used during build:
+ ```sh 
+ $DOCKER_USER #docker hub repository and username
+ $DOCKER_PASS #docker hub password
  ``` 
  
 # Request examples
